@@ -47,21 +47,21 @@ export const contentAPI = {
    * List all content
    */
   list: async (): Promise<Content[]> => {
-    return fetchAPI<Content[]>('/content')
+    return fetchAPI<Content[]>('/narrative/content')
   },
 
   /**
    * Get specific content by ID
    */
   get: async (id: number): Promise<Content> => {
-    return fetchAPI<Content>(`/content/${id}`)
+    return fetchAPI<Content>(`/narrative/content/${id}`)
   },
 
   /**
    * Create new content
    */
   create: async (data: ContentCreate): Promise<Content> => {
-    return fetchAPI<Content>('/content', {
+    return fetchAPI<Content>('/narrative/content', {
       method: 'POST',
       body: JSON.stringify(data),
     })
@@ -71,7 +71,7 @@ export const contentAPI = {
    * Delete content and all associated data
    */
   delete: async (id: number): Promise<{ message: string }> => {
-    return fetchAPI<{ message: string }>(`/content/${id}`, {
+    return fetchAPI<{ message: string }>(`/narrative/content/${id}`, {
       method: 'DELETE',
     })
   },
@@ -85,7 +85,7 @@ export const contentAPI = {
     responses: any
   }> => {
     return fetchAPI<{ message: string; content_id: number; responses: any }>(
-      `/content/${id}/stakeholder-responses`,
+      `/narrative/content/${id}/stakeholder-responses`,
       {
         method: 'POST',
         body: JSON.stringify(responses),
@@ -102,7 +102,7 @@ export const contentAPI = {
     has_responses: boolean
   }> => {
     return fetchAPI<{ content_id: number; responses: any; has_responses: boolean }>(
-      `/content/${id}/stakeholder-responses`
+      `/narrative/content/${id}/stakeholder-responses`
     )
   },
 
@@ -119,7 +119,7 @@ export const contentAPI = {
     const formData = new FormData()
     formData.append('file', file)
 
-    const response = await fetch(`${API_URL}/upload-pdf`, {
+    const response = await fetch(`${API_URL}/narrative/upload-pdf`, {
       method: 'POST',
       body: formData,
     })
@@ -145,11 +145,10 @@ export const narrativeAPI = {
     contentId: number,
     count: number = 10
   ): Promise<GenerateResponse> => {
-    return fetchAPI<GenerateResponse>('/generate-narratives', {
+    return fetchAPI<GenerateResponse>(`/narrative/content/${contentId}/generate`, {
       method: 'POST',
       body: JSON.stringify({
-        content_id: contentId,
-        candidates_count: count,
+        round: 1,
       }),
     })
   },
@@ -167,21 +166,21 @@ export const narrativeAPI = {
       completed_at: string | null
     }>
   }> => {
-    return fetchAPI(`/content/${contentId}/sessions`)
+    return fetchAPI(`/narrative/content/${contentId}/rounds`)
   },
 
   /**
    * Get session with all candidates
    */
   getSession: async (sessionId: number): Promise<SessionWithCandidates> => {
-    return fetchAPI<SessionWithCandidates>(`/sessions/${sessionId}`)
+    return fetchAPI<SessionWithCandidates>(`/narrative/sessions/${sessionId}`)
   },
 
   /**
    * Get specific candidate details
    */
   getCandidate: async (candidateId: number): Promise<NarrativeCandidate> => {
-    return fetchAPI<NarrativeCandidate>(`/candidates/${candidateId}`)
+    return fetchAPI<NarrativeCandidate>(`/narrative/candidates/${candidateId}`)
   },
 
   /**
@@ -191,7 +190,7 @@ export const narrativeAPI = {
     sessionId: number,
     limit: number = 5
   ): Promise<{ session_id: number; top_candidates: NarrativeCandidate[] }> => {
-    return fetchAPI(`/session/${sessionId}/top-candidates?limit=${limit}`)
+    return fetchAPI(`/narrative/session/${sessionId}/top-candidates?limit=${limit}`)
   },
 
   /**
@@ -209,11 +208,10 @@ export const narrativeAPI = {
     improvement: number
     message: string
   }> => {
-    return fetchAPI('/generate-refined-narratives', {
+    return fetchAPI(`/narrative/content/${contentId}/generate`, {
       method: 'POST',
       body: JSON.stringify({
-        content_id: contentId,
-        candidates_count: count,
+        round: 2,
       }),
     })
   },
@@ -234,7 +232,7 @@ export const narrativeAPI = {
     improvement: number
     message: string
   }> => {
-    return fetchAPI(`/sessions/${sessionId}/start-round-2`, {
+    return fetchAPI(`/narrative/sessions/${sessionId}/start-round-2`, {
       method: 'POST',
       body: JSON.stringify({
         stakeholder_feedback: stakeholderFeedback,
@@ -259,7 +257,7 @@ export const narrativeAPI = {
       stakeholder_feedback: string | null
     }>
   }> => {
-    return fetchAPI(`/content/${contentId}/rounds`)
+    return fetchAPI(`/narrative/content/${contentId}/rounds`)
   },
 
   /**
@@ -277,7 +275,7 @@ export const narrativeAPI = {
     created_at: string
     completed_at: string | null
   }> => {
-    return fetchAPI(`/sessions/${sessionId}/progress`)
+    return fetchAPI(`/narrative/sessions/${sessionId}/status`)
   },
 }
 
