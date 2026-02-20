@@ -431,23 +431,26 @@ export default function StakeholderInterviewModal({
   const handleSubmit = async () => {
     setIsSaving(true)
     try {
-      // Structure responses by role
-      const structuredResponses: Record<string, Record<string, any>> = {
-        content_head: {},
-        content_manager: {},
-        marketing_manager: {},
-        creative_head: {}
-      }
+      // Convert responses to array format for backend
+      // Backend expects: Array<{role: string, question: string, answer: any}>
+      const structuredResponses: Array<{role: string, question: string, answer: any}> = []
 
       Object.entries(responses).forEach(([questionId, value]) => {
         // Find which role this question belongs to
         for (const [roleId, questions] of Object.entries(QUESTIONS)) {
-          if (questions.some((q: any) => q.id === questionId)) {
-            structuredResponses[roleId][questionId] = value
+          const question = questions.find((q: any) => q.id === questionId)
+          if (question) {
+            structuredResponses.push({
+              role: roleId,
+              question: question.question,
+              answer: value
+            })
+            break // Stop after finding the question
           }
         }
       })
 
+      console.log('📋 Structured responses (array format):', structuredResponses)
       onComplete(structuredResponses)
     } catch (error) {
       console.error('Error submitting responses:', error)

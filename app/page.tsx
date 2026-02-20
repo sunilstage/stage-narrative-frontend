@@ -458,6 +458,10 @@ function ContentCard({ content, language }: { content: Content; language: import
       queryClient.invalidateQueries({ queryKey: ['contents'] })
       queryClient.invalidateQueries({ queryKey: ['content-sessions', content.id] })
     },
+    onError: (error: any) => {
+      console.error('❌ Generation failed:', error)
+      alert(`Failed to generate narratives: ${error.message}`)
+    },
   })
 
   const deleteMutation = useMutation({
