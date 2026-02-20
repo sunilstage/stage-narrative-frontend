@@ -86,7 +86,7 @@ export default function ContentDetails() {
             </div>
           )}
 
-          {content.target_audience && (
+          {content.targetAudience && (
             <div className="flex items-center">
               <svg
                 className="w-5 h-5 mr-2 text-gray-400"
@@ -103,7 +103,7 @@ export default function ContentDetails() {
               </svg>
               <div>
                 <p className="text-xs text-gray-500">Target Audience</p>
-                <p className="font-medium">{content.target_audience}</p>
+                <p className="font-medium">{content.targetAudience}</p>
               </div>
             </div>
           )}

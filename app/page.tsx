@@ -61,7 +61,7 @@ export default function Dashboard() {
       title: formData.get('title') as string,
       genre: formData.get('genre') as string,
       runtime: parseInt(formData.get('runtime') as string) || undefined,
-      target_audience: formData.get('target_audience') as string,
+      targetAudience: formData.get('target_audience') as string,
       summary: formData.get('summary') as string,
       script: extractedScript || (formData.get('script') as string),
       themes: formData.get('themes') as string,
@@ -148,6 +148,7 @@ export default function Dashboard() {
                 <input
                   type="text"
                   name="genre"
+                  required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-stage-red focus:border-stage-red text-gray-900 bg-white placeholder:text-gray-400"
                   placeholder={t.form.genrePlaceholder}
                 />
@@ -583,12 +584,12 @@ function ContentCard({ content, language }: { content: Content; language: import
             {content.runtime} minutes
           </div>
         )}
-        {content.target_audience && (
+        {content.targetAudience && (
           <div className="flex items-center text-sm text-gray-500">
             <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
-            {content.target_audience}
+            {content.targetAudience}
           </div>
         )}
       </div>

@@ -320,11 +320,11 @@ export default function ProjectOverviewTab({ content, sessions, compact = false 
               value={`${content.runtime} minutes`}
             />
           )}
-          {content.target_audience && (
+          {content.targetAudience && (
             <MetricCard
               icon={<FiUsers className="text-green-600" />}
               label="Target Audience"
-              value={content.target_audience}
+              value={content.targetAudience}
             />
           )}
           {content.created_at && (
