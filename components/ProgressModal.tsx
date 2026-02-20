@@ -44,10 +44,27 @@ export default function ProgressModal({ sessionId, contentTitle, onComplete, onB
     const interval = setInterval(async () => {
       try {
         const data = await api.narrative.getProgress(sessionId)
-        setProgress(data.progress)
+
+        // Handle both formats: number or object
+        const progressData = typeof data.progress === 'number'
+          ? {
+              phase: data.progress >= 100 ? 'complete' :
+                     data.progress >= 70 ? 'audience' :
+                     data.progress >= 30 ? 'council' :
+                     data.progress >= 10 ? 'analysis' : 'starting',
+              percent: data.progress,
+              message: data.progress >= 100 ? 'Generation complete!' :
+                       data.progress >= 70 ? 'Evaluating with audience personas...' :
+                       data.progress >= 30 ? 'Production council brainstorming...' :
+                       data.progress >= 10 ? 'Analyzing content...' : 'Starting generation...',
+              updated_at: new Date().toISOString()
+            }
+          : data.progress
+
+        setProgress(progressData)
         setStatus(data.status)
 
-        if (data.status === 'complete') {
+        if (data.status === 'completed' || data.status === 'complete') {
           clearInterval(interval)
           setTimeout(() => {
             onComplete()
