@@ -17,6 +17,7 @@ import { useBackgroundJobs } from '@/contexts/BackgroundJobsContext'
 import ProgressModal from '@/components/ProgressModal'
 import StakeholderInterviewModal from '@/components/StakeholderInterviewModal'
 import { useRouter } from 'next/navigation'
+import { logger } from '@/lib/logger'
 
 export default function Dashboard() {
   const { language } = useLanguage()
@@ -35,26 +36,45 @@ export default function Dashboard() {
 
   // Create content mutation
   const createMutation = useMutation({
-    mutationFn: (data: ContentCreate) => api.content.create(data),
-    onSuccess: () => {
+    mutationFn: (data: ContentCreate) => {
+      logger.info('Creating content', { title: data.title })
+      return api.content.create(data)
+    },
+    onSuccess: (data) => {
+      logger.success('Content created', { id: data.id, title: data.title })
       queryClient.invalidateQueries({ queryKey: ['contents'] })
       setShowCreateForm(false)
       setExtractedScript('')
       setPdfFileName('')
     },
+    onError: (error: any) => {
+      logger.error('Content creation failed', error)
+    },
   })
 
   // PDF upload mutation
   const pdfUploadMutation = useMutation({
-    mutationFn: (file: File) => api.content.uploadPDF(file),
+    mutationFn: (file: File) => {
+      logger.userAction('Upload PDF', { filename: file.name, size: file.size })
+      return api.content.uploadPDF(file)
+    },
     onSuccess: (data) => {
+      logger.success('PDF extracted', {
+        filename: data.filename,
+        pages: data.pages,
+        characters: data.character_count
+      })
       setExtractedScript(data.extracted_text)
       setPdfFileName(data.filename)
+    },
+    onError: (error: any) => {
+      logger.error('PDF upload failed', error)
     },
   })
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    logger.userAction('Create Project - Form Submit')
     const formData = new FormData(e.currentTarget)
 
     const data: ContentCreate = {
@@ -449,9 +469,12 @@ function ContentCard({ content, language }: { content: Content; language: import
   ).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) || []
 
   const generateMutation = useMutation({
-    mutationFn: (contentId: string) =>
-      api.narrative.generate(contentId, 10),
+    mutationFn: (contentId: string) => {
+      logger.userAction('Generate Narratives', { contentId })
+      return api.narrative.generate(contentId, 10)
+    },
     onSuccess: (data) => {
+      logger.success('Generation started', { sessionId: data.session_id })
       // Generation started - show progress modal
       setActiveSessionId(data.session_id)
       setShowProgress(true)
@@ -459,55 +482,66 @@ function ContentCard({ content, language }: { content: Content; language: import
       queryClient.invalidateQueries({ queryKey: ['content-sessions', content.id] })
     },
     onError: (error: any) => {
-      console.error('❌ Generation failed:', error)
+      logger.error('Generation failed', error)
       alert(`Failed to generate narratives: ${error.message}`)
     },
   })
 
   const deleteMutation = useMutation({
-    mutationFn: (contentId: string) => api.content.delete(contentId),
+    mutationFn: (contentId: string) => {
+      logger.userAction('Delete Content', { contentId })
+      return api.content.delete(contentId)
+    },
     onSuccess: () => {
+      logger.success('Content deleted', { contentId: content.id })
       queryClient.invalidateQueries({ queryKey: ['contents'] })
       setShowDeleteConfirm(false)
+    },
+    onError: (error: any) => {
+      logger.error('Content deletion failed', error)
     },
   })
 
   const saveStakeholderMutation = useMutation({
     mutationFn: (responses: any) => {
-      console.log('💾 Saving stakeholder responses:', responses)
+      logger.userAction('Save Stakeholder Responses', {
+        contentId: content.id,
+        responseCount: Array.isArray(responses) ? responses.length : 0
+      })
       return api.content.saveStakeholderResponses(content.id, responses)
     },
     onSuccess: (data) => {
-      console.log('✅ Stakeholder responses saved successfully:', data)
+      logger.success('Stakeholder responses saved', { contentId: content.id })
       queryClient.invalidateQueries({ queryKey: ['stakeholder-responses', content.id] })
       setShowInterviewModal(false)
       // Now start generation
       generateMutation.mutate(content.id)
     },
     onError: (error) => {
-      console.error('❌ Failed to save stakeholder responses:', error)
+      logger.error('Stakeholder save failed', error)
       alert('Failed to save interview responses. Please try again.')
       setShowInterviewModal(false)
     },
   })
 
   const handleGenerate = () => {
-    console.log('🎬 Generate clicked. Has stakeholder responses?', hasStakeholderResponses)
-    console.log('📊 Stakeholder data:', stakeholderData)
+    logger.userAction('Generate Button Clicked', { contentId: content.id })
+    logger.info('Checking stakeholder responses', { hasResponses: hasStakeholderResponses })
 
     // Check if stakeholder interview is complete
     if (!hasStakeholderResponses) {
       // Show interview modal first
-      console.log('❌ No stakeholder responses found - showing interview modal')
+      logger.warn('No stakeholder responses - opening interview modal', { contentId: content.id })
       setShowInterviewModal(true)
     } else {
       // Already have responses, start generation
-      console.log('✅ Stakeholder responses exist - starting generation')
+      logger.info('Stakeholder responses exist - starting generation', { contentId: content.id })
       generateMutation.mutate(content.id)
     }
   }
 
   const handleDelete = () => {
+    logger.userAction('Confirm Delete', { contentId: content.id })
     deleteMutation.mutate(content.id)
   }
 
@@ -563,7 +597,11 @@ function ContentCard({ content, language }: { content: Content; language: import
         </div>
         {/* Delete Button */}
         <button
-          onClick={() => setShowDeleteConfirm(true)}
+          onClick={() => {
+            logger.userAction('Delete Button Clicked', { contentId: content.id })
+            setShowDeleteConfirm(true)
+            logger.stateChange('ContentCard', 'Delete modal opened')
+          }}
           className="ml-2 p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
           title="Delete project"
         >

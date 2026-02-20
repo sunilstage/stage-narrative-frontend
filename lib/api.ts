@@ -11,6 +11,7 @@ import type {
   NarrativeCandidate,
   TeamVote
 } from './types'
+import { logger } from './logger'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
 
@@ -55,6 +56,11 @@ async function fetchAPI<T>(
   endpoint: string,
   options?: RequestInit
 ): Promise<T> {
+  const method = options?.method || 'GET'
+  const body = options?.body ? JSON.parse(options.body as string) : null
+
+  logger.apiRequest(endpoint, method, body)
+
   const response = await fetch(`${API_URL}${endpoint}`, {
     ...options,
     headers: {
@@ -65,11 +71,15 @@ async function fetchAPI<T>(
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ detail: 'Unknown error' }))
+    logger.apiError(endpoint, { status: response.status, error })
     throw new Error(error.detail || `API Error: ${response.statusText}`)
   }
 
   const data = await response.json()
-  return transformMongoDoc<T>(data)
+  const transformed = transformMongoDoc<T>(data)
+  logger.apiResponse(endpoint, response.status, transformed)
+
+  return transformed
 }
 
 // ============================================================================

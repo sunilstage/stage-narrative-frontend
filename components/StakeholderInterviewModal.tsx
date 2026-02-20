@@ -9,6 +9,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { FiX, FiCheck, FiChevronLeft, FiChevronRight, FiMenu, FiDownload, FiUpload } from 'react-icons/fi'
 import { motion, AnimatePresence } from 'framer-motion'
+import { logger } from '@/lib/logger'
 
 interface StakeholderInterviewModalProps {
   contentId: string  // MongoDB ObjectId
@@ -331,15 +332,18 @@ export default function StakeholderInterviewModal({
 
   // Load saved responses from localStorage on mount
   useEffect(() => {
+    logger.stateChange('StakeholderInterviewModal', 'Opened', { contentId })
     const savedData = localStorage.getItem(`stakeholder_interview_${contentId}`)
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData)
         setResponses(parsed.responses || {})
         setCompletedRoles(parsed.completedRoles || [])
-        console.log('✅ Restored saved interview data:', Object.keys(parsed.responses).length, 'answers')
+        logger.info('Restored saved interview data', {
+          answersCount: Object.keys(parsed.responses).length
+        })
       } catch (e) {
-        console.error('Failed to parse saved interview data:', e)
+        logger.error('Failed to parse saved interview data', e)
       }
     }
   }, [contentId])
@@ -370,11 +374,20 @@ export default function StakeholderInterviewModal({
   }
 
   const handleNext = () => {
+    logger.userAction('Interview Next Button', {
+      role: currentRole.id,
+      question: currentQuestionIndex + 1
+    })
+
     // Check if current question is answered (unless optional)
     const isAnswered = responses[currentQuestion.id] !== undefined
     const isRequired = currentQuestion.required !== false
 
     if (isRequired && !isAnswered) {
+      logger.warn('Question not answered', {
+        role: currentRole.id,
+        question: currentQuestion.id
+      })
       alert('Please answer this question before continuing')
       return
     }
@@ -429,6 +442,11 @@ export default function StakeholderInterviewModal({
   }
 
   const handleSubmit = async () => {
+    logger.userAction('Complete Stakeholder Interview', {
+      contentId,
+      totalResponses: Object.keys(responses).length,
+      completedRoles: completedRoles.length
+    })
     setIsSaving(true)
     try {
       // Convert responses to array format for backend
@@ -450,10 +468,11 @@ export default function StakeholderInterviewModal({
         }
       })
 
-      console.log('📋 Structured responses (array format):', structuredResponses)
+      logger.info('Structured responses', { count: structuredResponses.length })
       onComplete(structuredResponses)
+      logger.success('Stakeholder interview completed')
     } catch (error) {
-      console.error('Error submitting responses:', error)
+      logger.error('Stakeholder interview submission failed', error)
       alert('Failed to save responses. Please try again.')
     } finally {
       setIsSaving(false)
@@ -461,11 +480,13 @@ export default function StakeholderInterviewModal({
   }
 
   const handleExport = () => {
+    logger.userAction('Export Stakeholder Data', { contentId })
     try {
       // Get data from localStorage
       const savedData = localStorage.getItem(`stakeholder_interview_${contentId}`)
 
       if (!savedData) {
+        logger.warn('No saved data to export', { contentId })
         alert('No saved data found to export.')
         return
       }
@@ -513,14 +534,18 @@ export default function StakeholderInterviewModal({
       document.body.removeChild(link)
       URL.revokeObjectURL(url)
 
+      logger.success('Stakeholder data exported', {
+        responseCount: Object.keys(data.responses || {}).length
+      })
       alert(`✅ Exported ${Object.keys(data.responses || {}).length} responses successfully!`)
     } catch (error) {
-      console.error('Error exporting data:', error)
+      logger.error('Export data failed', error)
       alert('Failed to export data. Please check console for details.')
     }
   }
 
   const handleImport = () => {
+    logger.userAction('Import Stakeholder Data', { contentId })
     fileInputRef.current?.click()
   }
 
@@ -590,6 +615,10 @@ export default function StakeholderInterviewModal({
         lastSaved: new Date().toISOString()
       }))
 
+      logger.success('Stakeholder data imported', {
+        responseCount: Object.keys(validResponses).length,
+        completedRoles: importedCompletedRoles.length
+      })
       alert(`✅ Successfully imported ${Object.keys(validResponses).length} responses!\n\n${importedCompletedRoles.length} role(s) completed:\n${importedCompletedRoles.map(id => ROLES.find(r => r.id === id)?.name).join(', ') || 'None'}`)
 
       // Reset to first incomplete role or stay on current
@@ -599,7 +628,7 @@ export default function StakeholderInterviewModal({
         setCurrentQuestionIndex(0)
       }
     } catch (error) {
-      console.error('Error importing data:', error)
+      logger.error('Import data failed', error)
       alert(`❌ Failed to import file: ${error instanceof Error ? error.message : 'Invalid JSON format'}`)
     } finally {
       // Clear file input so the same file can be selected again
