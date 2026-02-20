@@ -63,13 +63,13 @@ export default function NarrativesTab({ session, onNavigateToCouncil, councilCon
 
   const selectedCandidate = candidates.find((c: NarrativeCandidate) => c.id === selectedId)
 
-  const handleSelectNarrative = (id: number) => {
+  const handleSelectNarrative = (id: string) => {  // MongoDB ObjectId
     const url = new URL(window.location.href)
-    url.searchParams.set('selected', id.toString())
+    url.searchParams.set('selected', id)  // Already a string
     router.push(url.pathname + url.search, { scroll: false })
   }
 
-  const handleRound2Success = (round2SessionId: number) => {
+  const handleRound2Success = (round2SessionId: string) => {  // MongoDB ObjectId
     // Navigate to Round 2 results
     router.push(`/project/${params.id}?tab=narratives&session=${round2SessionId}`)
   }

@@ -17,7 +17,7 @@ import { PRODUCTION_ROLES, AUDIENCE_PERSONAS } from '@/lib/types'
 
 interface NarrativeCardProps {
   narrative: NarrativeCandidate
-  onBookmark?: (id: number) => void
+  onBookmark?: (id: string) => void  // MongoDB ObjectId
   isBookmarked?: boolean
 }
 

@@ -13,8 +13,8 @@ import type { NarrativeCandidate } from '@/lib/types'
 
 interface NarrativeFilmstripProps {
   narratives: NarrativeCandidate[]
-  activeId: number
-  onSelect: (id: number) => void
+  activeId: string  // MongoDB ObjectId
+  onSelect: (id: string) => void
 }
 
 export default function NarrativeFilmstrip({

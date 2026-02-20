@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 import { FiDownload, FiX, FiCheck } from 'react-icons/fi'
 
 interface ExportBarProps {
-  selectedIds: number[]
+  selectedIds: string[]  // MongoDB ObjectId array
   totalCount: number
   onExport: () => void
   onClear: () => void
@@ -97,9 +97,9 @@ export function SelectionCheckbox({
   isSelected,
   onToggle
 }: {
-  id: number
+  id: string  // MongoDB ObjectId
   isSelected: boolean
-  onToggle: (id: number) => void
+  onToggle: (id: string) => void
 }) {
   return (
     <button
