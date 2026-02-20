@@ -8,7 +8,7 @@
 // ============================================================================
 
 export interface Content {
-  id: number
+  id: string  // MongoDB ObjectId
   title: string
   genre?: string
   runtime?: number
@@ -41,15 +41,15 @@ export interface ContentCreate {
 // ============================================================================
 
 export interface NarrativeSession {
-  id: number
-  content_id: number
+  id: string  // MongoDB ObjectId
+  content_id: string  // MongoDB ObjectId
   status: 'pending' | 'generating' | 'evaluating' | 'complete' | 'failed'
   candidates_count: number
   created_at: string
   completed_at?: string
   evaluation_mode?: 'independent' | 'deliberative'
   round_number?: number
-  parent_session_id?: number
+  parent_session_id?: string  // MongoDB ObjectId
   content_analysis?: any
   council_conversation?: any
 }
@@ -64,7 +64,7 @@ export interface SessionWithCandidates {
 // ============================================================================
 
 export interface NarrativeCandidate {
-  id: number
+  id: string  // MongoDB ObjectId
   rank: number
   narrative_text: string
   angle: string
@@ -114,7 +114,7 @@ export interface DemographicBreakdown {
 // ============================================================================
 
 export interface TeamVote {
-  candidate_id: number
+  candidate_id: string  // MongoDB ObjectId
   user_email: string
   user_role?: string
   score: number
@@ -127,7 +127,7 @@ export interface TeamVote {
 // ============================================================================
 
 export interface GenerateResponse {
-  session_id: number
+  session_id: string  // MongoDB ObjectId
   status: string
   candidates_generated: number
   message: string

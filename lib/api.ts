@@ -18,6 +18,39 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 // HELPER FUNCTIONS
 // ============================================================================
 
+/**
+ * Transform MongoDB document by converting _id to id
+ */
+function transformMongoDoc<T>(doc: any): T {
+  if (!doc) return doc
+
+  // Handle arrays
+  if (Array.isArray(doc)) {
+    return doc.map(item => transformMongoDoc(item)) as T
+  }
+
+  // Handle objects
+  if (typeof doc === 'object') {
+    const transformed: any = {}
+
+    for (const [key, value] of Object.entries(doc)) {
+      // Convert _id to id
+      if (key === '_id') {
+        transformed.id = typeof value === 'object' && value !== null ? (value as any).toString() : value
+      } else {
+        // Recursively transform nested objects
+        transformed[key] = typeof value === 'object' && value !== null
+          ? transformMongoDoc(value)
+          : value
+      }
+    }
+
+    return transformed as T
+  }
+
+  return doc
+}
+
 async function fetchAPI<T>(
   endpoint: string,
   options?: RequestInit
@@ -35,7 +68,8 @@ async function fetchAPI<T>(
     throw new Error(error.detail || `API Error: ${response.statusText}`)
   }
 
-  return response.json()
+  const data = await response.json()
+  return transformMongoDoc<T>(data)
 }
 
 // ============================================================================
@@ -53,7 +87,7 @@ export const contentAPI = {
   /**
    * Get specific content by ID
    */
-  get: async (id: number): Promise<Content> => {
+  get: async (id: string): Promise<Content> => {
     return fetchAPI<Content>(`/narrative/content/${id}`)
   },
 
@@ -70,7 +104,7 @@ export const contentAPI = {
   /**
    * Delete content and all associated data
    */
-  delete: async (id: number): Promise<{ message: string }> => {
+  delete: async (id: string): Promise<{ message: string }> => {
     return fetchAPI<{ message: string }>(`/narrative/content/${id}`, {
       method: 'DELETE',
     })
@@ -79,12 +113,12 @@ export const contentAPI = {
   /**
    * Save stakeholder interview responses
    */
-  saveStakeholderResponses: async (id: number, responses: any): Promise<{
+  saveStakeholderResponses: async (id: string, responses: any): Promise<{
     message: string
-    content_id: number
+    content_id: string
     responses: any
   }> => {
-    return fetchAPI<{ message: string; content_id: number; responses: any }>(
+    return fetchAPI<{ message: string; content_id: string; responses: any }>(
       `/narrative/content/${id}/stakeholder-responses`,
       {
         method: 'POST',
@@ -96,12 +130,12 @@ export const contentAPI = {
   /**
    * Get stakeholder interview responses
    */
-  getStakeholderResponses: async (id: number): Promise<{
-    content_id: number
+  getStakeholderResponses: async (id: string): Promise<{
+    content_id: string
     responses: any
     has_responses: boolean
   }> => {
-    return fetchAPI<{ content_id: number; responses: any; has_responses: boolean }>(
+    return fetchAPI<{ content_id: string; responses: any; has_responses: boolean }>(
       `/narrative/content/${id}/stakeholder-responses`
     )
   },
@@ -142,7 +176,7 @@ export const narrativeAPI = {
    * Generate narratives for content using council brainstorming
    */
   generate: async (
-    contentId: number,
+    contentId: string,
     count: number = 10
   ): Promise<GenerateResponse> => {
     return fetchAPI<GenerateResponse>(`/narrative/content/${contentId}/generate`, {
@@ -156,10 +190,10 @@ export const narrativeAPI = {
   /**
    * Get all sessions for a content
    */
-  getContentSessions: async (contentId: number): Promise<{
-    content_id: number
+  getContentSessions: async (contentId: string): Promise<{
+    content_id: string
     sessions: Array<{
-      id: number
+      id: string
       status: string
       candidates_count: number
       created_at: string
@@ -172,14 +206,14 @@ export const narrativeAPI = {
   /**
    * Get session with all candidates
    */
-  getSession: async (sessionId: number): Promise<SessionWithCandidates> => {
+  getSession: async (sessionId: string): Promise<SessionWithCandidates> => {
     return fetchAPI<SessionWithCandidates>(`/narrative/sessions/${sessionId}`)
   },
 
   /**
    * Get specific candidate details
    */
-  getCandidate: async (candidateId: number): Promise<NarrativeCandidate> => {
+  getCandidate: async (candidateId: string): Promise<NarrativeCandidate> => {
     return fetchAPI<NarrativeCandidate>(`/narrative/candidates/${candidateId}`)
   },
 
@@ -187,9 +221,9 @@ export const narrativeAPI = {
    * Get top N candidates for Sensor Board
    */
   getTopCandidates: async (
-    sessionId: number,
+    sessionId: string,
     limit: number = 5
-  ): Promise<{ session_id: number; top_candidates: NarrativeCandidate[] }> => {
+  ): Promise<{ session_id: string; top_candidates: NarrativeCandidate[] }> => {
     return fetchAPI(`/narrative/session/${sessionId}/top-candidates?limit=${limit}`)
   },
 
@@ -197,12 +231,12 @@ export const narrativeAPI = {
    * Generate refined Round 2 narratives based on Round 1 learnings
    */
   generateRefined: async (
-    contentId: number,
+    contentId: string,
     count: number = 10
   ): Promise<{
-    session_id: number
+    session_id: string
     round_number: number
-    parent_session_id: number
+    parent_session_id: string
     round_1_best_score: number
     round_2_best_score: number
     improvement: number
@@ -220,11 +254,11 @@ export const narrativeAPI = {
    * Start Round 2 with stakeholder feedback
    */
   startRound2: async (
-    sessionId: number,
+    sessionId: string,
     stakeholderFeedback: string,
     count: number = 10
   ): Promise<{
-    round_2_session_id: number
+    round_2_session_id: string
     status: string
     candidates_count: number
     top_score: number
@@ -244,16 +278,16 @@ export const narrativeAPI = {
   /**
    * Get all rounds for a content
    */
-  getRounds: async (contentId: number): Promise<{
+  getRounds: async (contentId: string): Promise<{
     rounds: Array<{
-      session_id: number
+      session_id: string
       round_number: number
       status: string
       candidates_count: number
       top_score: number | null
       created_at: string
       completed_at: string | null
-      parent_session_id: number | null
+      parent_session_id: string | null
       stakeholder_feedback: string | null
     }>
   }> => {
@@ -263,8 +297,8 @@ export const narrativeAPI = {
   /**
    * Get real-time progress for a generation session
    */
-  getProgress: async (sessionId: number): Promise<{
-    session_id: number
+  getProgress: async (sessionId: string): Promise<{
+    session_id: string
     status: string
     progress: {
       phase: string

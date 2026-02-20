@@ -11,7 +11,7 @@ import { FiX, FiCheck, FiChevronLeft, FiChevronRight, FiMenu, FiDownload, FiUplo
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface StakeholderInterviewModalProps {
-  contentId: number
+  contentId: string  // MongoDB ObjectId
   contentTitle: string
   onComplete: (responses: any) => void
   onCancel: () => void
