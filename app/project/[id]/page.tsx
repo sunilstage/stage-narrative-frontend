@@ -65,7 +65,7 @@ export default function ProjectDetailPage() {
     router.push(url.pathname + url.search, { scroll: false })
   }
 
-  const handleRoundChange = (sessionId: number) => {
+  const handleRoundChange = (sessionId: string) => {
     const url = new URL(window.location.href)
     url.searchParams.set('session', sessionId.toString())
     router.push(url.pathname + url.search, { scroll: false })

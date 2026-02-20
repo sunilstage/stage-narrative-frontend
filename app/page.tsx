@@ -448,7 +448,7 @@ function ContentCard({ content, language }: { content: Content; language: import
   ).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) || []
 
   const generateMutation = useMutation({
-    mutationFn: (contentId: number) =>
+    mutationFn: (contentId: string) =>
       api.narrative.generate(contentId, 10),
     onSuccess: (data) => {
       // Generation started - show progress modal
@@ -460,7 +460,7 @@ function ContentCard({ content, language }: { content: Content; language: import
   })
 
   const deleteMutation = useMutation({
-    mutationFn: (contentId: number) => api.content.delete(contentId),
+    mutationFn: (contentId: string) => api.content.delete(contentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contents'] })
       setShowDeleteConfirm(false)

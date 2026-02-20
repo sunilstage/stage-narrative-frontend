@@ -15,8 +15,8 @@ import { useState, useEffect } from 'react'
 export default function BackgroundJobsIndicator() {
   const { jobs, removeJob } = useBackgroundJobs()
   const router = useRouter()
-  const [expandedJobs, setExpandedJobs] = useState<Set<number>>(new Set())
-  const [pinnedJobs, setPinnedJobs] = useState<Set<number>>(new Set())
+  const [expandedJobs, setExpandedJobs] = useState<Set<string>>(new Set())
+  const [pinnedJobs, setPinnedJobs] = useState<Set<string>>(new Set())
   const [isHovered, setIsHovered] = useState(false)
 
   // Persist expanded and pinned state in localStorage
@@ -98,7 +98,7 @@ export default function BackgroundJobsIndicator() {
 
   if (jobs.length === 0) return null
 
-  const toggleExpanded = (sessionId: number) => {
+  const toggleExpanded = (sessionId: string) => {
     setExpandedJobs(prev => {
       const newSet = new Set(prev)
       if (newSet.has(sessionId)) {
@@ -110,7 +110,7 @@ export default function BackgroundJobsIndicator() {
     })
   }
 
-  const togglePinned = (sessionId: number) => {
+  const togglePinned = (sessionId: string) => {
     setPinnedJobs(prev => {
       const newSet = new Set(prev)
       if (newSet.has(sessionId)) {

@@ -9,9 +9,9 @@ import { useState } from 'react'
 import { api } from '@/lib/api'
 
 interface Round2ModalProps {
-  sessionId: number
+  sessionId: string
   onClose: () => void
-  onSuccess: (round2SessionId: number) => void
+  onSuccess: (round2SessionId: string) => void
 }
 
 export default function Round2Modal({ sessionId, onClose, onSuccess }: Round2ModalProps) {

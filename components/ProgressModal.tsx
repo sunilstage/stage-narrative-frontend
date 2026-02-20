@@ -12,7 +12,7 @@ import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 interface ProgressModalProps {
-  sessionId: number
+  sessionId: string
   contentTitle: string
   onComplete: () => void
   onBackground: () => void

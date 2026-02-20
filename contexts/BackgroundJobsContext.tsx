@@ -10,8 +10,8 @@ import { createContext, useContext, useState, useEffect, ReactNode, useCallback 
 import { api } from '@/lib/api'
 
 interface BackgroundJob {
-  sessionId: number
-  contentId: number
+  sessionId: string
+  contentId: string
   contentTitle: string
   roundNumber?: number
   status: 'generating' | 'complete' | 'failed'
@@ -30,9 +30,9 @@ interface BackgroundJob {
 interface BackgroundJobsContextType {
   jobs: BackgroundJob[]
   addJob: (job: Omit<BackgroundJob, 'status' | 'progress' | 'startedAt'>) => void
-  removeJob: (sessionId: number) => void
-  updateJob: (sessionId: number, updates: Partial<BackgroundJob>) => void
-  getJob: (sessionId: number) => BackgroundJob | undefined
+  removeJob: (sessionId: string) => void
+  updateJob: (sessionId: string, updates: Partial<BackgroundJob>) => void
+  getJob: (sessionId: string) => BackgroundJob | undefined
 }
 
 const BackgroundJobsContext = createContext<BackgroundJobsContextType | undefined>(undefined)
@@ -120,17 +120,17 @@ export function BackgroundJobsProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const removeJob = (sessionId: number) => {
+  const removeJob = (sessionId: string) => {
     setJobs(prev => prev.filter(j => j.sessionId !== sessionId))
   }
 
-  const updateJob = (sessionId: number, updates: Partial<BackgroundJob>) => {
+  const updateJob = (sessionId: string, updates: Partial<BackgroundJob>) => {
     setJobs(prev => prev.map(j =>
       j.sessionId === sessionId ? { ...j, ...updates } : j
     ))
   }
 
-  const getJob = (sessionId: number) => {
+  const getJob = (sessionId: string) => {
     return jobs.find(j => j.sessionId === sessionId)
   }
 
