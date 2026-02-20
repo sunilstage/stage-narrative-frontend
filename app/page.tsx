@@ -415,7 +415,7 @@ function ContentCard({ content, language }: { content: Content; language: import
   const router = useRouter()
   const { addJob } = useBackgroundJobs()
   const [showProgress, setShowProgress] = useState(false)
-  const [activeSessionId, setActiveSessionId] = useState<number | null>(null)
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null)  // MongoDB ObjectId
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [showInterviewModal, setShowInterviewModal] = useState(false)
 
