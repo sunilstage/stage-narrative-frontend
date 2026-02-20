@@ -13,7 +13,7 @@ import Link from 'next/link'
 
 export default function ContentDetails() {
   const params = useParams()
-  const contentId = parseInt(params.id as string)
+  const contentId = params.id as string  // MongoDB ObjectId string
 
   const { data: content, isLoading, error } = useQuery({
     queryKey: ['content', contentId],

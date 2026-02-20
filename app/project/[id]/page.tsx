@@ -25,7 +25,7 @@ export default function ProjectDetailPage() {
   const params = useParams()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const projectId = parseInt(params.id as string)
+  const projectId = params.id as string  // MongoDB ObjectId string
 
   // Get active tab from URL or default to 'narratives'
   const urlTab = searchParams.get('tab') as TabType
@@ -46,7 +46,7 @@ export default function ProjectDetailPage() {
   // Get session ID from URL or use latest completed round
   const urlSessionId = searchParams.get('session')
   const activeSessionId = urlSessionId
-    ? parseInt(urlSessionId)
+    ? urlSessionId  // Already a string (MongoDB ObjectId)
     : roundsData?.rounds
         ?.filter((r: any) => r.status === 'complete')
         ?.sort((a: any, b: any) => b.round_number - a.round_number)[0]?.session_id

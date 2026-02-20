@@ -26,7 +26,7 @@ type TabType = 'candidates' | 'council' | 'insights'
 export default function SessionResults() {
   const params = useParams()
   const router = useRouter()
-  const sessionId = parseInt(params.id as string)
+  const sessionId = params.id as string  // MongoDB ObjectId string
   const [activeTab, setActiveTab] = useState<TabType>('candidates')
   const [selectedCandidate, setSelectedCandidate] = useState<NarrativeCandidate | null>(null)
   const [sortBy, setSortBy] = useState<'rank' | 'production' | 'audience'>('rank')
