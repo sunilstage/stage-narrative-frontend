@@ -17,9 +17,7 @@ import { cn } from '@/lib/utils'
 import ProjectOverviewTab from '@/components/tabs/ProjectOverviewTab'
 import NarrativesTab from '@/components/tabs/NarrativesTab'
 import CouncilDiscussionTab from '@/components/tabs/CouncilDiscussionTab'
-import PersonaReviewsTab from '@/components/tabs/PersonaReviewsTab'
-
-type TabType = 'overview' | 'narratives' | 'council' | 'personas'
+type TabType = 'overview' | 'narratives' | 'council'
 
 export default function ProjectDetailPage() {
   const params = useParams()
@@ -169,12 +167,6 @@ export default function ProjectDetailPage() {
               label="Council Discussion"
               disabled={!councilConversation}
             />
-            <TabButton
-              active={activeTab === 'personas'}
-              onClick={() => handleTabChange('personas')}
-              label="Persona Reviews"
-              disabled={candidates.length === 0}
-            />
           </div>
         </div>
       </div>
@@ -197,12 +189,6 @@ export default function ProjectDetailPage() {
           <CouncilDiscussionTab
             conversation={councilConversation}
             narratives={candidates}
-          />
-        )}
-
-        {activeTab === 'personas' && candidates.length > 0 && (
-          <PersonaReviewsTab
-            candidates={candidates}
           />
         )}
       </div>

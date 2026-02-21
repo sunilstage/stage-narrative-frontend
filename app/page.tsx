@@ -675,14 +675,14 @@ function ContentCard({ content, language }: { content: Content; language: import
 
           {/* Session History */}
           <div className="mt-2 space-y-1">
-            {completedSessions.slice(0, 3).map((session: any) => (
+            {completedSessions.slice(0, 3).map((session: any, idx: number) => (
               <Link
                 key={session.id}
-                href={`/project/${content.id}?tab=narratives`}
+                href={`/project/${content.id}?tab=narratives&session=${session.id}`}
                 className="block w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md hover:border-gray-300 transition-colors text-xs text-gray-600"
               >
                 <div className="flex items-center justify-between">
-                  <span>Session #{session.id} • {session.candidates_count} narratives</span>
+                  <span>Round {session.round_number || (completedSessions.length - idx)} • 10 narratives</span>
                   <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded font-medium text-[10px]">
                     ✓ Complete
                   </span>
