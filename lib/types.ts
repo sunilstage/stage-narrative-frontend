@@ -54,8 +54,7 @@ export interface NarrativeSession {
   council_conversation?: any
 }
 
-export interface SessionWithCandidates {
-  session: NarrativeSession
+export interface SessionWithCandidates extends NarrativeSession {
   candidates: NarrativeCandidate[]
 }
 
