@@ -125,7 +125,7 @@ export default function SessionResults() {
               onClick={() => setActiveTab('council')}
               icon={<FiMessageSquare />}
               label="Council Discussion"
-              badge={session.session.council_conversation ? '✓' : null}
+              badge={session.council_conversation ? '✓' : null}
             />
             <TabButton
               active={activeTab === 'insights'}
@@ -150,7 +150,7 @@ export default function SessionResults() {
           )}
 
           {activeTab === 'council' && (
-            <CouncilTab conversation={session.session.council_conversation} />
+            <CouncilTab conversation={session.council_conversation} />
           )}
 
           {activeTab === 'insights' && (

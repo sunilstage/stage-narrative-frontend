@@ -113,7 +113,7 @@ export default function NarrativesTab({ session, onNavigateToCouncil, councilCon
       {/* Round 2 Modal */}
       {showRound2Modal && (
         <Round2Modal
-          sessionId={session.session.id}
+          sessionId={session.id}
           onClose={() => setShowRound2Modal(false)}
           onSuccess={handleRound2Success}
         />

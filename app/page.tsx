@@ -564,7 +564,7 @@ function ContentCard({ content, language }: { content: Content; language: import
           sessionId: activeSessionId,
           contentId: content.id,
           contentTitle: content.title,
-          roundNumber: sessionData.session?.round_number
+          roundNumber: sessionData.round_number
         })
       } catch (err) {
         console.error('Failed to fetch session data:', err)
