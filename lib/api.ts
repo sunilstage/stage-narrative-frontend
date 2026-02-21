@@ -288,19 +288,23 @@ export const narrativeAPI = {
   /**
    * Get all rounds for a content
    */
-  getRounds: async (contentId: string): Promise<{
-    rounds: Array<{
-      session_id: string
-      round_number: number
-      status: string
-      candidates_count: number
-      top_score: number | null
-      created_at: string
-      completed_at: string | null
-      parent_session_id: string | null
-      stakeholder_feedback: string | null
-    }>
-  }> => {
+  getRounds: async (contentId: string): Promise<Array<{
+    id: string
+    _id: string
+    content_id: string
+    status: string
+    round_number: number
+    evaluation_mode: string
+    progress: number
+    createdAt: string
+    updatedAt: string
+    startedAt?: string
+    completedAt?: string
+    parent_session_id?: string
+    metadata?: any
+    council_conversation?: any
+    content_analysis?: any
+  }>> => {
     return fetchAPI(`/narrative/content/${contentId}/rounds`)
   },
 
@@ -308,16 +312,8 @@ export const narrativeAPI = {
    * Get real-time progress for a generation session
    */
   getProgress: async (sessionId: string): Promise<{
-    session_id: string
     status: string
-    progress: {
-      phase: string
-      percent: number
-      message: string
-      updated_at: string
-    } | null
-    created_at: string
-    completed_at: string | null
+    progress: number
   }> => {
     return fetchAPI(`/narrative/sessions/${sessionId}/status`)
   },

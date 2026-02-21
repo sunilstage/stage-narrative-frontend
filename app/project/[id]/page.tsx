@@ -47,9 +47,7 @@ export default function ProjectDetailPage() {
   const urlSessionId = searchParams.get('session')
   const activeSessionId = urlSessionId
     ? urlSessionId  // Already a string (MongoDB ObjectId)
-    : roundsData?.rounds
-        ?.filter((r: any) => r.status === 'complete')
-        ?.sort((a: any, b: any) => b.round_number - a.round_number)[0]?.session_id
+    : roundsData?.find((r: any) => r.status === 'completed')?.id
 
   // Fetch session details if available
   const { data: sessionData } = useQuery({
@@ -97,7 +95,7 @@ export default function ProjectDetailPage() {
   }
 
   const candidates = sessionData?.candidates || []
-  const councilConversation = sessionData?.session?.council_conversation
+  const councilConversation = sessionData?.council_conversation
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -119,9 +117,9 @@ export default function ProjectDetailPage() {
                   {content.genre && (
                     <span className="text-sm text-gray-600">{content.genre}</span>
                   )}
-                  {(roundsData?.rounds?.length ?? 0) > 0 && (
+                  {(roundsData?.length ?? 0) > 0 && (
                     <span className="text-sm text-gray-500">
-                      • {roundsData!.rounds!.length} round{roundsData!.rounds!.length > 1 ? 's' : ''}
+                      • {roundsData!.length} round{roundsData!.length > 1 ? 's' : ''}
                     </span>
                   )}
                 </div>
@@ -129,15 +127,15 @@ export default function ProjectDetailPage() {
             </div>
 
             {/* Round Selector */}
-            {roundsData && roundsData.rounds.length > 1 && (
+            {roundsData && roundsData.length > 1 && (
               <div className="flex gap-2">
-                {roundsData.rounds.map((round: any) => (
+                {roundsData.map((round: any) => (
                   <button
-                    key={round.session_id}
-                    onClick={() => handleRoundChange(round.session_id)}
+                    key={round.id}
+                    onClick={() => handleRoundChange(round.id)}
                     className={cn(
                       "px-4 py-2 rounded-lg font-bold border-2 transition-colors",
-                      activeSessionId === round.session_id
+                      activeSessionId === round.id
                         ? "bg-blue-600 text-white border-blue-600"
                         : "bg-white text-gray-700 border-gray-300 hover:border-blue-400"
                     )}
