@@ -201,7 +201,6 @@ export const narrativeAPI = {
    * Get all sessions for a content
    */
   getContentSessions: async (contentId: string): Promise<{
-    content_id: string
     sessions: Array<{
       id: string
       status: string
@@ -210,7 +209,9 @@ export const narrativeAPI = {
       completed_at: string | null
     }>
   }> => {
-    return fetchAPI(`/narrative/content/${contentId}/rounds`)
+    // Backend returns array directly, wrap it for compatibility
+    const sessions = await fetchAPI<any[]>(`/narrative/content/${contentId}/rounds`)
+    return { sessions }
   },
 
   /**
