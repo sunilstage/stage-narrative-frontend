@@ -69,12 +69,25 @@ export function BackgroundJobsProvider({ children }: { children: ReactNode }) {
         try {
           const data = await api.narrative.getProgress(job.sessionId)
 
+          // Transform progress number to object format
+          const progressObj = typeof data.progress === 'number' ? {
+            phase: data.progress >= 100 ? 'complete' :
+                   data.progress >= 70 ? 'audience' :
+                   data.progress >= 30 ? 'council' :
+                   data.progress >= 10 ? 'analysis' : 'starting',
+            percent: data.progress,
+            message: data.progress >= 100 ? 'Generation complete!' :
+                     data.progress >= 70 ? 'Evaluating with audience personas...' :
+                     data.progress >= 30 ? 'Production council brainstorming...' :
+                     data.progress >= 10 ? 'Analyzing content...' : 'Starting generation...'
+          } : data.progress
+
           setJobs(prev => prev.map(j =>
             j.sessionId === job.sessionId
               ? {
                   ...j,
-                  status: data.status as any,
-                  progress: data.progress
+                  status: data.status === 'completed' ? 'complete' : data.status as any,
+                  progress: progressObj
                 }
               : j
           ))
