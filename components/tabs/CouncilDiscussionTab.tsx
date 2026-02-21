@@ -256,9 +256,10 @@ function DiscussionView({ messages, narrativesCreated, narrativeMap }: {
       <div className="space-y-6">
         {messages.map((message: any, idx: number) => {
           // Check if this message introduces a narrative
-          const introducedNarrative = narrativesCreated.find((n: any) =>
-            message.message.toLowerCase().includes(n.narrative.toLowerCase().slice(0, 30))
-          )
+          const introducedNarrative = narrativesCreated.find((n: any) => {
+            const narrativeText = typeof n === 'string' ? n : (n?.narrative || '')
+            return narrativeText && message.message.toLowerCase().includes(narrativeText.toLowerCase().slice(0, 30))
+          })
 
           return (
             <div key={idx}>

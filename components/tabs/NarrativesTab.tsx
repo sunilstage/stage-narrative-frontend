@@ -443,10 +443,11 @@ function ProductionCouncilView({ candidate, onNavigateToCouncil, councilConversa
   councilConversation?: any
 }) {
   // Extract relevant discussion about this narrative
-  const narrativeText = candidate.narrative_text.slice(0, 50).toLowerCase()
+  const narrativeText = candidate.narrative_text?.slice(0, 50).toLowerCase() || ''
+  const angleText = candidate.angle?.toLowerCase() || ''
   const relevantMessages = councilConversation?.conversation?.filter((msg: any) =>
-    msg.message.toLowerCase().includes(narrativeText.slice(0, 30)) ||
-    msg.message.toLowerCase().includes(candidate.angle.toLowerCase())
+    (narrativeText && msg.message.toLowerCase().includes(narrativeText.slice(0, 30))) ||
+    (angleText && msg.message.toLowerCase().includes(angleText))
   ).slice(0, 3) || []
 
   return (
