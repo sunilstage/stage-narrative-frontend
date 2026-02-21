@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { LanguageToggle } from './LanguageToggle'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { useTranslation } from '@/lib/i18n'
 
@@ -36,7 +35,6 @@ export function Navbar() {
             >
               {t.nav.dashboard}
             </Link>
-            <LanguageToggle />
           </div>
         </div>
       </div>
