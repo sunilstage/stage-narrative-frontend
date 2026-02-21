@@ -182,7 +182,7 @@ export default function ProjectDetailPage() {
       {/* Tab Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         {activeTab === 'overview' && (
-          <ProjectOverviewTab content={content} sessions={roundsData?.rounds || []} />
+          <ProjectOverviewTab content={content} sessions={roundsData || []} />
         )}
 
         {activeTab === 'narratives' && (
