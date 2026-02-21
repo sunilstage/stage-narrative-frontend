@@ -146,69 +146,21 @@ export default function Dashboard() {
       {showCreateForm && (
         <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
           <h2 className="text-2xl font-bold text-stage-black mb-6">{t.dashboard.createContent}</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t.form.titleRequired}
-                </label>
-                <input
-                  type="text"
-                  name="title"
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-stage-red focus:border-stage-red text-gray-900 bg-white placeholder:text-gray-400"
-                  placeholder={t.form.titlePlaceholder}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t.form.genre}
-                </label>
-                <input
-                  type="text"
-                  name="genre"
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-stage-red focus:border-stage-red text-gray-900 bg-white placeholder:text-gray-400"
-                  placeholder={t.form.genrePlaceholder}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t.form.runtime}
-                </label>
-                <input
-                  type="number"
-                  name="runtime"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-stage-red focus:border-stage-red text-gray-900 bg-white placeholder:text-gray-400"
-                  placeholder={t.form.runtimePlaceholder}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t.form.targetAudience}
-                </label>
-                <input
-                  type="text"
-                  name="target_audience"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-stage-red focus:border-stage-red text-gray-900 bg-white placeholder:text-gray-400"
-                  placeholder={t.form.audiencePlaceholder}
-                />
-              </div>
-            </div>
-
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t.form.summary}
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t.form.titleRequired}
               </label>
-              <textarea
-                name="summary"
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-stage-red focus:border-stage-red text-gray-900 bg-white placeholder:text-gray-400"
-                placeholder={t.form.summaryPlaceholder}
+              <input
+                type="text"
+                name="title"
+                required
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-stage-red focus:border-stage-red text-gray-900 bg-white placeholder:text-gray-400 text-lg"
+                placeholder={t.form.titlePlaceholder}
               />
+              <p className="mt-2 text-sm text-gray-500">
+                AI will automatically extract genre, target audience, and other details from your script
+              </p>
             </div>
 
             {/* PDF Upload Section */}

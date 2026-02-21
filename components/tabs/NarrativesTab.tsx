@@ -169,10 +169,10 @@ export default function NarrativesTab({ session, onNavigateToCouncil, councilCon
       <div className="grid grid-cols-12 gap-6 h-[calc(100vh-340px)]">
         {/* Left Panel - Narrative List (33%) */}
         <div className="col-span-4 overflow-y-auto bg-white rounded-xl border-2 border-gray-200 p-4">
-          <h3 className="text-lg font-bold text-gray-900 mb-4 sticky top-0 bg-white pb-2 border-b-2 border-gray-100">
+          <h3 className="text-xl font-bold text-gray-900 mb-6 sticky top-0 bg-white pb-3 border-b-2 border-gray-200 z-10">
             All Narratives ({filteredCandidates.length})
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {filteredCandidates.map((candidate: NarrativeCandidate) => (
               <NarrativeListItem
                 key={candidate.id}
@@ -226,26 +226,27 @@ function NarrativeListItem({ candidate, selected, onClick }: {
   return (
     <button
       onClick={onClick}
+      type="button"
       className={cn(
-        "w-full text-left p-3 rounded-lg border-2 transition-all",
+        "w-full text-left p-5 rounded-xl border-2 transition-all hover:shadow-lg cursor-pointer",
         selected
-          ? "border-stage-red bg-red-50 shadow-md"
-          : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+          ? "border-stage-red bg-red-50 shadow-lg scale-[1.02]"
+          : "border-gray-200 hover:border-gray-400 hover:bg-gray-50"
       )}
     >
-      <div className="flex items-start gap-3 mb-2">
-        <div className={cn("w-10 h-10 rounded-lg flex flex-col items-center justify-center font-bold text-white shadow-sm flex-shrink-0", rankBadge.bg)}>
-          <span className="text-lg">{rankBadge.icon}</span>
-          <span className="text-[10px]">#{candidate.rank}</span>
+      <div className="flex items-start gap-4 mb-3">
+        <div className={cn("w-14 h-14 rounded-xl flex flex-col items-center justify-center font-bold text-white shadow-md flex-shrink-0", rankBadge.bg)}>
+          <span className="text-2xl">{rankBadge.icon}</span>
+          <span className="text-xs">#{candidate.rank}</span>
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1 flex-wrap">
-            <div className="px-2 py-1 bg-purple-600 text-white rounded text-xs font-bold">
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <div className="px-3 py-1.5 bg-purple-600 text-white rounded-lg text-sm font-bold">
               {candidate.angle}
             </div>
             {candidate.generation_type && (
               <div className={cn(
-                "px-2 py-1 rounded text-xs font-bold",
+                "px-3 py-1.5 rounded-lg text-sm font-bold",
                 candidate.generation_type === 'ai_human'
                   ? "bg-gradient-to-r from-blue-500 to-green-500 text-white"
                   : "bg-gray-500 text-white"
@@ -254,16 +255,16 @@ function NarrativeListItem({ candidate, selected, onClick }: {
               </div>
             )}
           </div>
-          <p className="text-sm text-gray-900 font-medium line-clamp-2 leading-relaxed">
+          <p className="text-base text-gray-900 font-medium line-clamp-3 leading-relaxed">
             {candidate.narrative_text}
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-3 mt-2 pt-2 border-t border-gray-200">
-        <ScoreBadge score={candidate.overall_score} label="Overall" color="red" size="xs" />
-        <ScoreBadge score={candidate.production_avg} label="Prod" color="green" size="xs" />
-        <ScoreBadge score={candidate.audience_avg} label="Aud" color="blue" size="xs" />
+      <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-200">
+        <ScoreBadge score={candidate.overall_score} label="Overall" color="red" size="sm" />
+        <ScoreBadge score={candidate.production_avg} label="Prod" color="green" size="sm" />
+        <ScoreBadge score={candidate.audience_avg} label="Aud" color="blue" size="sm" />
       </div>
     </button>
   )

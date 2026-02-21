@@ -124,24 +124,21 @@ export default function ProjectDetailPage() {
               </div>
             </div>
 
-            {/* Round Selector */}
-            {roundsData && roundsData.length > 1 && (
-              <div className="flex gap-2">
-                {roundsData.map((round: any) => (
-                  <button
-                    key={round.id}
-                    onClick={() => handleRoundChange(round.id)}
-                    className={cn(
-                      "px-4 py-2 rounded-lg font-bold border-2 transition-colors",
-                      activeSessionId === round.id
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white text-gray-700 border-gray-300 hover:border-blue-400"
-                    )}
-                  >
-                    Round {round.round_number}
-                    {round.round_number > 1 && ' ✨'}
-                  </button>
-                ))}
+            {/* Round Selector Dropdown */}
+            {roundsData && roundsData.length > 0 && (
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium text-gray-700">Round:</span>
+                <select
+                  value={activeSessionId || ''}
+                  onChange={(e) => handleRoundChange(e.target.value)}
+                  className="px-4 py-2 rounded-lg font-bold border-2 border-gray-300 bg-white text-gray-900 hover:border-blue-400 focus:border-blue-600 focus:outline-none transition-colors cursor-pointer"
+                >
+                  {roundsData.map((round: any) => (
+                    <option key={round.id} value={round.id}>
+                      Round {round.round_number}{round.round_number > 1 ? ' ✨' : ''}
+                    </option>
+                  ))}
+                </select>
               </div>
             )}
           </div>
