@@ -465,7 +465,7 @@ function ContentCard({ content, language }: { content: Content; language: import
 
   // Get all completed sessions, sorted by newest first
   const completedSessions = sessionsData?.sessions?.filter(
-    (s) => s.status === 'complete'
+    (s) => s.status === 'completed'
   ).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()) || []
 
   const generateMutation = useMutation({
