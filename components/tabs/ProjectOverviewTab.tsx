@@ -279,6 +279,92 @@ export default function ProjectOverviewTab({ content, sessions, compact = false 
                 </div>
               </Section>
             )}
+
+            {/* Title Alternatives */}
+            {contentAnalysis.title_alternatives && contentAnalysis.title_alternatives.length > 0 && (
+              <Section title="Title Alternatives">
+                <div className="space-y-2">
+                  {contentAnalysis.title_alternatives.map((title: string, idx: number) => (
+                    <div key={idx} className="flex items-center gap-3 p-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg border-2 border-indigo-200">
+                      <span className="px-3 py-1 bg-indigo-600 text-white rounded-lg font-bold text-sm">
+                        #{idx + 1}
+                      </span>
+                      <p className="text-gray-900 font-bold text-lg flex-1">{title}</p>
+                    </div>
+                  ))}
+                </div>
+              </Section>
+            )}
+
+            {/* High Drama Scenes */}
+            {contentAnalysis.high_drama_scenes && contentAnalysis.high_drama_scenes.length > 0 && (
+              <Section title="High Drama Scenes (Perfect for Trailers)">
+                <div className="space-y-4">
+                  {contentAnalysis.high_drama_scenes.map((scene: any, idx: number) => (
+                    <div key={idx} className="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-5 border-2 border-red-200">
+                      <div className="flex items-start gap-3 mb-3">
+                        <span className="px-3 py-2 bg-red-600 text-white rounded-lg font-bold shadow-sm">
+                          Scene {idx + 1}
+                        </span>
+                        {scene.timestamp && (
+                          <span className="px-3 py-1 bg-orange-100 text-orange-800 rounded-lg text-sm font-semibold border border-orange-200">
+                            {scene.timestamp}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-gray-900 font-medium mb-2">{scene.scene_description}</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                        <div className="bg-white rounded-lg p-3 border border-red-200">
+                          <div className="text-xs text-red-600 font-bold mb-1">Emotional Peak</div>
+                          <div className="text-sm text-gray-800">{scene.emotional_peak}</div>
+                        </div>
+                        <div className="bg-white rounded-lg p-3 border border-orange-200">
+                          <div className="text-xs text-orange-600 font-bold mb-1">Marketing Potential</div>
+                          <div className="text-sm text-gray-800">{scene.marketing_potential}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Section>
+            )}
+
+            {/* Similar Content References */}
+            {contentAnalysis.similar_content_references && contentAnalysis.similar_content_references.length > 0 && (
+              <Section title="Similar Content References">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {contentAnalysis.similar_content_references.map((ref: any, idx: number) => (
+                    <div key={idx} className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-5 border-2 border-blue-200">
+                      <div className="flex items-center gap-2 mb-3">
+                        <h4 className="text-gray-900 font-bold text-lg flex-1">{ref.title}</h4>
+                      </div>
+                      <div className="flex gap-2 mb-3">
+                        {ref.platform && (
+                          <span className="px-2 py-1 bg-blue-600 text-white rounded text-xs font-bold">
+                            {ref.platform}
+                          </span>
+                        )}
+                        {ref.region && (
+                          <span className="px-2 py-1 bg-cyan-600 text-white rounded text-xs font-bold">
+                            {ref.region}
+                          </span>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <div className="bg-white rounded-lg p-3 border border-blue-200">
+                          <div className="text-xs text-blue-600 font-bold mb-1">Why Similar</div>
+                          <div className="text-sm text-gray-800">{ref.similarity_reason}</div>
+                        </div>
+                        <div className="bg-white rounded-lg p-3 border border-cyan-200">
+                          <div className="text-xs text-cyan-600 font-bold mb-1">Marketing Lessons</div>
+                          <div className="text-sm text-gray-800">{ref.what_to_learn}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Section>
+            )}
           </div>
         </CollapsibleSection>
       )}
@@ -286,19 +372,35 @@ export default function ProjectOverviewTab({ content, sessions, compact = false 
       {/* Original Content/Script */}
       {!compact && (content.summary || content.script) && (
         <CollapsibleSection
-          title="Original Story Content"
+          title="Original Story Content (Full Script)"
           icon="📄"
           isExpanded={expandedSections.has('script')}
           onToggle={() => toggleSection('script')}
         >
-          <div className="bg-gray-50 rounded-lg p-4 border-2 border-gray-200 max-h-96 overflow-y-auto">
-            <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
-              {content.summary || content.script}
-            </p>
+          <div className="relative">
+            <div className="bg-gray-50 rounded-lg p-6 border-2 border-gray-200 max-h-[600px] overflow-y-auto">
+              <p className="text-gray-800 leading-relaxed whitespace-pre-wrap font-mono text-sm">
+                {content.summary || content.script}
+              </p>
+            </div>
+            {/* Scroll indicator */}
+            {(content.summary || content.script).length > 2000 && (
+              <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none flex items-end justify-center pb-2">
+                <span className="text-xs text-gray-500 font-medium bg-white px-3 py-1 rounded-full border border-gray-200 shadow-sm">
+                  ↓ Scroll for more ↓
+                </span>
+              </div>
+            )}
           </div>
-          <p className="text-sm text-gray-500 mt-2">
-            📄 {(content.summary || content.script).length.toLocaleString()} characters
-          </p>
+          <div className="flex items-center justify-between mt-3 text-sm text-gray-600">
+            <span>
+              📄 {(content.summary || content.script).length.toLocaleString()} characters
+              ({Math.ceil((content.summary || content.script).length / 4).toLocaleString()} tokens approx.)
+            </span>
+            <span className="text-green-600 font-medium">
+              ✓ Full script loaded & analyzed by AI
+            </span>
+          </div>
         </CollapsibleSection>
       )}
 
